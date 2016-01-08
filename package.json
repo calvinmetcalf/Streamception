@@ -1,0 +1,28 @@
+{
+  "name": "streamception",
+  "version": "1.0.0",
+  "description": "yo dawg, I heard you liked streams, so I put some streams in your streams",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js | tspec"
+  },
+  "keywords": [
+    "stream",
+    "inception"
+  ],
+  "author": "Calvin Metcalf",
+  "license": "MIT",
+  "dependencies": {
+    "duplexify": "^3.4.2",
+    "readable-stream": "^2.0.5"
+  },
+  "devDependencies": {
+    "stream-array": "^1.1.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/calvinmetcalf/streamception.git"
+  }
+}
