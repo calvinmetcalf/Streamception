@@ -1,6 +1,8 @@
+'use strict';
 var test = require('tape');
 var streamArray = require('stream-array');
 var stream = require('readable-stream');
+var inherits = require('inherits');
 var streamception = require('./');
 function makeArray(what, howMuch) {
   var out = new Array(howMuch);
@@ -9,6 +11,29 @@ function makeArray(what, howMuch) {
     out[i] = what;
   }
   return out;
+}
+inherits(RecursiveStream, stream.Readable);
+function RecursiveStream(what, length, depth) {
+  stream.Readable.call(this, {
+    objectMode: true,
+    highWaterMark: 1,
+  });
+  this.depth = depth - 1;
+  this.length = length;
+  this.i = -1;
+  this.what = what;
+}
+RecursiveStream.prototype._read = function () {
+  this.i++;
+  if (this.i >= this.length) {
+    return this.push(null);
+  }
+  var what = this.what.slice();
+  what.push(this.i);
+  if (!this.depth) {
+    return this.push(what);
+  }
+  this.push(new RecursiveStream(what, this.length, this.depth));
 }
 function makeSubStream(what, howMuch, sneaky) {
   if (!sneaky) {
@@ -26,7 +51,7 @@ function makeSubStream(what, howMuch, sneaky) {
       setTimeout(function () {
         self.push(what);
         done();
-      }, 1000);
+      }, 100);
     }
   });
   return streamArray(makeArray(what, howMuch - 1)).pipe(out);
@@ -60,12 +85,27 @@ test('works!', function (t) {
   });
 });
 test('works sneaky like', function (t) {
-  t.plan(101);
+  t.plan(1);
   var i = 0;
+  var last = -1;
   makeSteamOfStreams(10, true).pipe(streamception()).on('data', function (d) {
     i++;
-    t.ok(true, `#${i}: ${d}`);
+    if (d < last) {
+      t.ok(false, `wrong order`);
+    }
+    last = d;
   }).on('end', function () {
     t.equals(100, i, 'correct ammount');
+  });
+});
+test('works recursivly', function (t) {
+  var i = 0;
+  var a = 2;
+  var b = 20;
+  new RecursiveStream([], a, b).pipe(streamception()).on('data', function (d) {
+    i++;
+  }).on('end', function () {
+    t.equals(i, Math.pow(a, b), `correct number of things: ${i}`);
+    t.end();
   });
 });
