@@ -12,3 +12,5 @@ Flattens out a stream of streams those streams can emit streams, which can emit 
 API: pipe in an object stream non stream items get passed through, if an object is a stream then it's objects are passed through instead, ditto if any of those are streams.  We test for the presence of a pipe method to figure out if something is a stream.
 
 Should correctly handle back pressure even in deeply nested streams.
+
+![infinite cats](http://i.giphy.com/7g1lOvyzFjXHi.gif)
