@@ -13,6 +13,4 @@ API: pipe in an object stream non stream items get passed through, if an object 
 
 Should correctly handle back pressure even in deeply nested streams.
 
-![Infinite cats](https://media.giphy.com/media/7g1lOvyzFjXHi/giphy.gif)
-
 MIT License
